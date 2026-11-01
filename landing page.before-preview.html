@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090819">
+  <title>E-book สิ่งที่ต้องรู้ก่อนลงทุน | sun.scratch</title>
+  <meta name="description" content="E-book สำหรับคนที่อยากเริ่มลงทุนหุ้น เข้าใจกลยุทธ์ อ่านงบการเงิน และฝึกศึกษาหุ้นด้วยตัวเอง">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090819;
+      --surface: #100d29;
+      --surface-2: #151030;
+      --text: #f5f4ff;
+      --muted: #b6b3cd;
+      --accent: #d6f353;
+      --line: #393151;
+      --red: #ee4127;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Kanit", sans-serif;
+      line-height: 1.7;
+    }
+    a { color: inherit; }
+    img, svg { max-width: 100%; }
+    .wrap {
+      width: min(1040px, calc(100% - clamp(32px, 5vw, 64px)));
+      margin-inline: auto;
+    }
+    .reading-progress {
+      position: fixed;
+      z-index: 20;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      pointer-events: none;
+    }
+
+    /* แถบราคาและตัวนับเวลา */
+    .offer-bar {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px 22px;
+      padding: 12px 16px;
+      color: #fff;
+      background: linear-gradient(110deg, #b91527, var(--red));
+      border-bottom: 1px solid #ff7e60;
+      box-shadow: 0 8px 35px #0003;
+    }
+    .offer-copy {
+      font-size: 18px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .offer-copy del { margin-inline: 6px; opacity: .75; }
+    .offer-copy strong {
+      color: #f1ff8b;
+      font-size: 25px;
+    }
+    .offer-timer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .offer-timer span {
+      min-width: 40px;
+      padding: 4px 8px;
+      border: 1px solid #ffb7a733;
+      border-radius: 6px;
+      background: #7d0c21;
+      box-shadow: inset 0 2px 4px #0003;
+      text-align: center;
+      font-size: 20px;
+    }
+    .offer-note, .offer-expired {
+      color: #ffe0d8;
+      font-size: 12px;
+      text-align: center;
+    }
+    [hidden] { display: none !important; }
+
+    /* ปุ่ม */
+    .button {
+      display: inline-flex;
+      min-height: 50px;
+      max-width: 100%;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 13px 27px;
+      border: 1px solid #efff91;
+      border-radius: 50px;
+      background: linear-gradient(#e6ff59, #c7ed20);
+      box-shadow: 0 7px 0 #7d9e09, 0 12px 23px #0005, inset 0 2px 0 #f6ffa9;
+      color: #101716;
+      font-weight: 700;
+      line-height: 1.5;
+      text-align: center;
+      text-decoration: none;
+      text-shadow: 0 1px #f7ffb9;
+      transition: transform .18s, box-shadow .18s;
+    }
+    .button::after { content: "↗"; font-size: 20px; }
+    .button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 0 #7d9e09, 0 18px 30px #0005, inset 0 2px 0 #f6ffa9;
+    }
+    .button:active {
+      transform: translateY(5px);
+      box-shadow: 0 2px 0 #7d9e09, 0 5px 12px #0004;
+    }
+    .button:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    /* ส่วนเปิดหน้า */
+    .hero {
+      overflow: hidden;
+      background: radial-gradient(ellipse at 45% 25%, #29135c 0%, #100c2e 56%, var(--bg) 100%);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+      align-items: center;
+      gap: clamp(24px, 4vw, 48px);
+      padding-block: 70px;
+    }
+    .hero-copy { animation: enter .75s both; }
+    .tag {
+      display: inline-block;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    h1 {
+      margin: 14px 0 18px;
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 700;
+      line-height: 1.28;
+      text-shadow: 0 5px 30px #0003;
+    }
+    .hero p {
+      max-width: 620px;
+      margin: 0 0 25px;
+      color: #eeebff;
+      font-size: 18px;
+    }
+    .hero .sub {
+      margin: 17px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .cover-wrap {
+      position: relative;
+      display: flex;
+      min-width: 0;
+      justify-content: center;
+      padding: 26px 0;
+    }
+    .market-line {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      opacity: .4;
+    }
+    .market-line path {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 2;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: draw 2s .5s ease forwards;
+    }
+    .market-line circle {
+      fill: var(--accent);
+      opacity: 0;
+      animation: appear .5s 2s forwards;
+    }
+    .cover {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: min(100%, 340px);
+      height: auto;
+      border: 1px solid #554765;
+      border-radius: 12px;
+      box-shadow: 0 25px 65px #0009;
+      transform: rotate(-3deg);
+      animation: book-enter 1s .2s both;
+    }
+
+    /* กลุ่มเนื้อหา */
+    .section { padding-block: 96px; }
+    .eyebrow {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    h2 {
+      margin: 8px 0 18px;
+      font-size: clamp(27px, 3.5vw, 40px);
+      font-weight: 600;
+      line-height: 1.45;
+    }
+    .lead, .muted-copy {
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .audience, .benefit { background: var(--surface); }
+    .aud-grid, .benefit-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      align-items: center;
+      gap: 60px;
+    }
+    .checks {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .checks li {
+      padding: 17px 0;
+      border-bottom: 1px solid #ffffff14;
+      color: var(--text);
+      font-size: 17px;
+      transition: background .4s;
+    }
+    .checks li:hover { background: #ffffff05; }
+    .checks li::before {
+      display: inline-block;
+      content: "✓";
+      margin-right: 14px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .motion-ready .checks li {
+      opacity: 0;
+      transform: translateX(22px);
+      transition: opacity .7s, transform .7s;
+      transition-delay: calc(var(--i) * 90ms);
+    }
+    .motion-ready .audience.in-view .checks li {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .aud-grid, .benefit { position: relative; }
+    .motion-ready .aud-grid > div {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .motion-ready .aud-grid.in-view > div {
+      animation: enter .8s ease forwards;
+    }
+
+    /* รายการบทในหนังสือ */
+    .lessons { background: var(--bg); }
+    .intro {
+      max-width: 820px;
+      margin-inline: auto;
+      text-align: center;
+    }
+    .lesson-list {
+      position: relative;
+      max-width: 900px;
+      margin: 42px auto 0;
+      padding-left: 28px;
+    }
+    .lesson-list::before, .lesson-list::after {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 2px;
+      content: "";
+    }
+    .lesson-list::before { background: #302649; }
+    .lesson-list::after {
+      height: var(--journey, 0%);
+      background: var(--accent);
+      box-shadow: 0 0 12px #d4f52666;
+    }
+    .lesson {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) minmax(0, 1.15fr);
+      align-items: start;
+      gap: 20px;
+      padding: 27px 16px;
+      border-bottom: 1px solid #ffffff14;
+      border-radius: 12px;
+      transition: background .5s, box-shadow .5s;
+    }
+    .lesson.passed {
+      background: linear-gradient(100deg, #25341c66, #31205a55);
+      box-shadow: inset 3px 0 var(--accent);
+    }
+    .lesson h3 {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 500;
+      line-height: 1.5;
+      transition: color .5s;
+    }
+    .lesson p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.85;
+      transition: color .5s;
+    }
+    .lesson.passed h3 { color: #f2ffb4; }
+    .lesson.passed p { color: #f1efcf; }
+    .num {
+      color: #82799e;
+      font-size: 15px;
+      font-weight: 700;
+      transition: color .5s;
+    }
+    .lesson.passed .num { color: var(--accent); }
+    .lesson-icon {
+      display: block;
+      width: 40px;
+      height: 40px;
+      margin-bottom: 10px;
+      color: #82799e;
+      transition: color .5s, filter .5s;
+    }
+    .lesson.passed .lesson-icon {
+      color: var(--accent);
+      filter: drop-shadow(0 0 8px #d4f52333);
+    }
+
+    /* สิ่งที่ผู้อ่านได้รับ */
+    .benefit-clock {
+      display: block;
+      width: 66px;
+      height: 66px;
+      margin-bottom: 18px;
+      color: var(--accent);
+    }
+    .clock-hand { transform-origin: 32px 32px; }
+    .benefit.in-view .clock-hand {
+      animation: clock-turn 1.6s cubic-bezier(.2,.7,.3,1) both;
+    }
+    .quote {
+      font-size: clamp(28px, 3.2vw, 42px);
+      font-weight: 600;
+      line-height: 1.6;
+    }
+    .quote span { color: var(--accent); }
+    .benefit p { color: var(--muted); font-size: 17px; }
+
+    /* FAQ และส่วนปิดท้าย */
+    .faq {
+      padding-block: 80px;
+      background: #09081d;
+    }
+    .faq .wrap { max-width: 820px; }
+    .faq h2 {
+      margin: 0 0 28px;
+      text-align: center;
+    }
+    .faq details {
+      overflow: hidden;
+      margin: 14px 0;
+      border: 1px solid #3c3159;
+      border-radius: 14px;
+      background: #15102f;
+      box-shadow: 0 5px 0 #040310;
+    }
+    .faq summary {
+      display: flex;
+      min-height: 58px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 17px 22px;
+      cursor: pointer;
+      list-style: none;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after {
+      flex: 0 0 auto;
+      content: "+";
+      color: var(--accent);
+      font-size: 25px;
+      line-height: 1;
+    }
+    .faq details[open] { border-color: #8d9c3f; }
+    .faq details[open] summary::after { content: "−"; }
+    .faq details p {
+      margin: 0;
+      padding: 0 22px 22px;
+      color: #c6c0db;
+      line-height: 1.85;
+      animation: faq-open .25s ease both;
+    }
+    .cta {
+      padding: 90px 20px;
+      background: radial-gradient(ellipse at 50% 100%, #321762, #0d0925 75%);
+      text-align: center;
+    }
+    .cta h2 {
+      max-width: 720px;
+      margin: 0 auto 15px;
+      font-size: clamp(30px, 4vw, 46px);
+    }
+    .cta p {
+      max-width: 620px;
+      margin: 0 auto 26px;
+      color: var(--muted);
+    }
+    .footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 16px;
+      padding-block: 25px;
+      padding-bottom: max(25px, env(safe-area-inset-bottom));
+      color: #868097;
+      font-size: 12px;
+    }
+    .footer p { margin: 0; }
+    .section, .cta { scroll-margin-top: 25px; }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes book-enter {
+      from { opacity: 0; transform: translateY(35px) rotate(1deg); }
+      to { opacity: 1; transform: translateY(0) rotate(-3deg); }
+    }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @keyframes appear { to { opacity: 1; } }
+    @keyframes clock-turn {
+      from { transform: rotate(-300deg); }
+      to { transform: rotate(0); }
+    }
+    @keyframes faq-open {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid { gap: 28px; }
+      .hero h1 { font-size: clamp(38px, 5.2vw, 48px); }
+      .hero p { font-size: 17px; }
+      .cover { max-width: 290px; }
+      .lesson { grid-template-columns: 42px minmax(0, 1fr) minmax(0, 1.1fr); gap: 15px; }
+    }
+    @media (max-width: 760px) {
+      .hero-grid { padding-block: 48px; }
+      .aud-grid, .benefit-grid { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+      .section { padding-block: clamp(48px, 8vw, 65px); }
+      .lesson { grid-template-columns: 42px minmax(0, 1fr); gap: 10px 12px; }
+      .lesson p { grid-column: 2; }
+      .offer-note { flex-basis: 100%; }
+    }
+    @media (max-width: 679px) {
+      .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-block: 40px 48px; text-align: center; }
+      .hero h1 { font-size: clamp(32px, 8.5vw, 44px); }
+      .hero p { margin-inline: auto; font-size: 16px; }
+      .hero .sub { font-size: 12px; }
+      .tag { font-size: 12px; }
+      .cover { width: min(78vw, 280px); }
+      .market-line { opacity: .25; }
+      .section h2 { font-size: clamp(25px, 6.6vw, 32px); }
+      .offer-bar { row-gap: 7px; }
+      .offer-copy { font-size: 15px; }
+      .offer-copy strong { font-size: 22px; }
+      .offer-timer span { min-width: 34px; padding: 4px 7px; font-size: 18px; }
+      .offer-note { font-size: 11px; }
+      .lesson-list { margin-top: 30px; padding-left: 14px; }
+      .lesson { padding: 22px 10px; }
+      .lesson h3 { font-size: 19px; }
+      .lesson p { font-size: 15px; }
+      .lesson-icon { width: 35px; height: 35px; }
+      .faq { padding-block: 58px; }
+      .faq h2 { font-size: 28px; }
+      .faq summary { padding: 17px 16px; font-size: 17px; }
+      .faq details p { padding: 0 16px 20px; }
+    }
+    @media (max-width: 359px) {
+      .wrap { width: calc(100% - 28px); }
+      .offer-bar { column-gap: 10px; }
+      .offer-copy { font-size: 14px; }
+      .offer-copy strong { font-size: 20px; }
+      .offer-timer { gap: 4px; }
+      .offer-timer span { min-width: 30px; font-size: 16px; }
+      .button { padding-inline: 22px; }
+      .checks li { font-size: 15px; }
+      .faq summary { font-size: 16px; }
+    }
+    @media (hover: none) {
+      .button:hover { transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition: none !important;
+      }
+      .motion-ready .checks li { opacity: 1; transform: none; }
+      .motion-ready .aud-grid > div { opacity: 1; transform: none; }
+      .market-line path { stroke-dashoffset: 0; }
+      .market-line circle { opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reading-progress" aria-hidden="true"></div>
+
+  <header class="offer-bar">
+    <div class="offer-copy">จาก <del>299 บาท</del> เหลือ <strong>199 บาท</strong></div>
+    <div class="offer-timer" role="timer" aria-label="เวลาที่เหลือของข้อเสนอ">
+      <span data-clock>06</span>:<span data-clock>00</span>:<span data-clock>00</span>
+    </div>
+    <div class="offer-note">เวลาที่เหลือสำหรับคุณ</div>
+    <div class="offer-expired" hidden>หมดเวลานับถอยหลังของวันนี้ · ตรวจสอบราคาปัจจุบันที่ Stripe</div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <span class="tag">E-book สำหรับคนที่อยากเข้าใจการลงทุนหุ้น</span>
+          <h1>สิ่งที่ต้องรู้<br>ก่อนลงทุน</h1>
+          <p>เริ่มจากพื้นฐาน ค่อย ๆ ทำความเข้าใจกลยุทธ์ อ่านงบการเงิน และนำความรู้ไปลงมือศึกษาหุ้นด้วยตัวเอง</p>
+          <a class="button" href="https://buy.stripe.com/6oUeVcgQqcqPav8dSGfIs0b">ซื้อ E-book</a>
+          <p class="sub">สำหรับมือใหม่และคนที่ลงทุนอยู่ แต่อยากเข้าใจให้มากขึ้น</p>
+        </div>
+
+        <div class="cover-wrap">
+          <svg class="market-line" viewBox="0 0 740 400" aria-hidden="true">
+            <path pathLength="1000" d="M0 310 L65 295 L110 325 L180 235 L225 258 L290 180 L345 205 L405 130 L470 170 L525 110 L590 145 L680 50 L740 70"/>
+            <circle cx="680" cy="50" r="5"/>
+          </svg>
+          <img class="cover" src="cover.png" alt="ภาพปก E-book สิ่งที่ต้องรู้ก่อนลงทุนหุ้น" width="1198" height="1313">
+        </div>
+      </div>
+    </section>
+
+    <section class="section audience">
+      <div class="wrap aud-grid">
+        <div>
+          <span class="eyebrow">เล่มนี้เหมาะกับใคร</span>
+          <h2>อยากลงทุนอย่างเข้าใจ เริ่มตรงนี้ได้</h2>
+          <p class="lead">หนังสือเล่มนี้รวบรวมสิ่งที่ควรรู้ให้คุณค่อย ๆ เรียนรู้และนำไปศึกษาต่อด้วยตัวเอง</p>
+        </div>
+        <ul class="checks">
+          <li>ยังไม่เคยลงทุนหุ้น และไม่รู้ว่าจะเริ่มจากตรงไหน</li>
+          <li>กำลังศึกษา แต่ข้อมูลเยอะจนต่อเรื่องไม่ถูก</li>
+          <li>ลงทุนอยู่แล้ว แต่อยากเข้าใจบริษัทและงบการเงินมากขึ้น</li>
+          <li>ฟังคนอื่นวิเคราะห์หุ้น แล้วอยากฝึกคิดต่อด้วยตัวเอง</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section lessons" id="contents">
+      <div class="wrap">
+        <div class="intro">
+          <span class="eyebrow">เนื้อหาใน E-book</span>
+          <h2>จากพื้นฐาน สู่การลงมือทำ</h2>
+          <p class="lead">ทั้ง 5 ส่วนเรียงจากเรื่องที่ควรรู้ก่อนลงทุน ไปจนถึงเครื่องมือที่ช่วยในการศึกษา</p>
+        </div>
+
+        <div class="lesson-list">
+          <article class="lesson"><span class="num">01</span><h3>12 สิ่งที่ต้องรู้<br>ก่อนลงทุน</h3><p>ปูพื้นฐานความเข้าใจตลาดหุ้น ความเสี่ยง และการเตรียมตัวก่อนเริ่มต้น</p></article>
+          <article class="lesson"><span class="num">02</span><h3>9 กลยุทธ์การลงทุนหุ้น</h3><p>ทำความรู้จักแนวทางลงทุนที่แตกต่าง เพื่อใช้ประกอบการเลือกวิธีที่เหมาะกับตัวเอง</p></article>
+          <article class="lesson"><span class="num">03</span><h3>อ่านงบการเงินหุ้น</h3><p>เริ่มทำความเข้าใจตัวเลขของบริษัท และเชื่อมข้อมูลทางการเงินกับธุรกิจ</p></article>
+          <article class="lesson"><span class="num">04</span><h3>ลงมือทำ!</h3><p>นำสิ่งที่เรียนรู้มาใช้ฝึกศึกษาและวิเคราะห์หุ้นด้วยตัวเองทีละขั้น</p></article>
+          <article class="lesson"><span class="num">05</span><h3>Special section<br>AI tools</h3><p>เรียนรู้การใช้ AI เป็นผู้ช่วยจัดข้อมูลและตั้งคำถาม พร้อมตรวจสอบกับแหล่งข้อมูลจริง</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section benefit">
+      <div class="wrap benefit-grid">
+        <div>
+          <span class="eyebrow">สิ่งที่คุณได้รับ</span>
+          <svg class="benefit-clock" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <circle cx="32" cy="32" r="27"/>
+            <path class="clock-hand" d="M32 14v18l12 8"/>
+            <path d="M32 5v5 M59 32h-5 M32 59v-5 M5 32h5"/>
+          </svg>
+          <div class="quote">ประหยัดเวลาในการศึกษา<br><span>ไปหลายเดือน</span> ✨</div>
+        </div>
+        <div>
+          <h2>เพราะเวลาเป็นสิ่งที่ซื้อคืนไม่ได้</h2>
+          <p class="muted-copy">เริ่มเรียนรู้ด้วยเนื้อหาที่รวบรวมและเรียงลำดับไว้ เพื่อช่วยให้คุณเห็นภาพว่าควรศึกษาอะไรต่อ และนำเวลาไปฝึกคิด ฝึกวิเคราะห์ด้วยตัวเอง</p>
+          <a class="button" href="https://buy.stripe.com/6oUeVcgQqcqPav8dSGfIs0b">ซื้อ E-book</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <div class="wrap">
+        <h2>คำถามที่พบบ่อย</h2>
+        <details>
+          <summary>ไม่มีพื้นฐานเรื่องหุ้น อ่านได้ไหม?</summary>
+          <p>อ่านได้ครับ เนื้อหาเริ่มจากสิ่งที่ควรรู้ก่อนลงทุน แล้วค่อยไปสู่กลยุทธ์ งบการเงิน และการลงมือศึกษา</p>
+        </details>
+        <details>
+          <summary>ลงทุนอยู่แล้ว เล่มนี้เหมาะกับผมหรือเปล่า?</summary>
+          <p>เหมาะกับคนที่อยากทบทวนพื้นฐาน และเชื่อมข้อมูลธุรกิจ งบการเงิน และกลยุทธ์เข้าด้วยกัน เพื่อฝึกคิดและศึกษาต่อด้วยตัวเองครับ</p>
+        </details>
+        <details>
+          <summary>ในเล่มมีเนื้อหาอะไรบ้าง?</summary>
+          <p>มี 5 ส่วน ได้แก่ 12 สิ่งที่ต้องรู้ก่อนลงทุน, 9 กลยุทธ์การลงทุนหุ้น, อ่านงบการเงินหุ้น, ลงมือทำ และ Special section เรื่องการใช้ AI tools</p>
+        </details>
+        <details>
+          <summary>หนังสือเล่มนี้รับประกันผลตอบแทนไหม?</summary>
+          <p>เนื้อหาช่วยให้เข้าใจและฝึกศึกษาการลงทุน ไม่รับประกันผลตอบแทน การตัดสินใจลงทุนต้องพิจารณาข้อมูลและความเสี่ยงของตัวเองครับ</p>
+        </details>
+        <details>
+          <summary>ชำระแล้ว รับ E-book ได้ทางไหน?</summary>
+          <p>หลังจากชำระเงินสำเร็จ จะมีปุ่มให้กดดาวน์โหลด E-book ได้ทันทีบนหน้าชำระเงินเสร็จแล้ว หรือรอระบบส่ง E-book ให้ทางอีเมลก็ได้ครับ</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="cta">
+      <h2>เริ่มสร้างความเข้าใจ<br>ก่อนตัดสินใจลงทุน</h2>
+      <p>E-book สิ่งที่ต้องรู้ก่อนลงทุน โดย sun.scratch</p>
+      <a class="button" href="https://buy.stripe.com/6oUeVcgQqcqPav8dSGfIs0b">ซื้อ E-book</a>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <p>sun.scratch · E-book สิ่งที่ต้องรู้ก่อนลงทุน</p>
+    <p>เนื้อหาเพื่อการศึกษา การลงทุนมีความเสี่ยง</p>
+  </footer>
+
+  <script>
+    const countdownKey = "sun-ebook-offer-v1";
+
+    function getBangkokDay(date) {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Bangkok",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(date);
+      const value = type => parts.find(part => part.type === type).value;
+      return `${value("year")}-${value("month")}-${value("day")}`;
+    }
+
+    function getOfferState(now, previous) {
+      const day = getBangkokDay(now);
+      const midnight = Date.parse(`${day}T00:00:00+07:00`) + 86400000;
+      const valid = previous &&
+        previous.day === day &&
+        Number.isFinite(previous.startedAt) &&
+        previous.startedAt <= now &&
+        previous.startedAt >= midnight - 86400000;
+      const startedAt = valid ? previous.startedAt : now;
+
+      return {
+        day,
+        startedAt,
+        expiresAt: Math.min(startedAt + 21600000, midnight)
+      };
+    }
+
+    let offerState;
+
+    function readOfferState() {
+      try {
+        return JSON.parse(localStorage.getItem(countdownKey));
+      } catch {
+        return null;
+      }
+    }
+
+    function updateCountdown() {
+      const now = Date.now();
+      offerState = getOfferState(now, offerState || readOfferState());
+
+      try {
+        localStorage.setItem(countdownKey, JSON.stringify(offerState));
+      } catch {}
+
+      const remaining = Math.max(0, Math.ceil((offerState.expiresAt - now) / 1000));
+      const timeParts = [
+        Math.floor(remaining / 3600),
+        Math.floor(remaining / 60) % 60,
+        remaining % 60
+      ];
+
+      document.querySelectorAll("[data-clock]").forEach((element, index) => {
+        element.textContent = String(timeParts[index]).padStart(2, "0");
+      });
+
+      document.querySelector(".offer-copy").hidden = remaining === 0;
+      document.querySelector(".offer-timer").hidden = remaining === 0;
+      document.querySelector(".offer-note").hidden = remaining === 0;
+      document.querySelector(".offer-expired").hidden = remaining !== 0;
+    }
+
+    window.addEventListener("storage", event => {
+      if (event.key === countdownKey) {
+        offerState = readOfferState();
+        updateCountdown();
+      }
+    });
+
+    updateCountdown();
+    window.setInterval(updateCountdown, 1000);
+
+    const lessonIcons = [
+      '<path d="M12 6h20l6 6v28H12z M31 6v9h7 M18 23h14 M18 29h14 M18 35h9"/>',
+      '<path d="M7 38h34 M12 31l8-10 9 5 11-17 M30 9h10v10"/>',
+      '<path d="M8 8h32v32H8z M8 19h32 M20 8v32 M27 26h7 M27 33h7"/>',
+      '<path d="M10 36l8-10 7 5 12-18 M26 13h11v11"/><circle cx="11" cy="11" r="4"/>',
+      '<rect x="9" y="13" width="30" height="25" rx="7"/><path d="M24 6v7 M17 38v5 M31 38v5 M3 23h6 M39 23h6 M17 22v5 M31 22v5 M18 32h12"/>'
+    ];
+
+    document.querySelectorAll(".lesson .num").forEach((element, index) => {
+      element.insertAdjacentHTML(
+        "afterbegin",
+        `<svg class="lesson-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${lessonIcons[index]}</svg>`
+      );
+    });
+
+    document.querySelectorAll(".checks li").forEach((element, index) => {
+      element.style.setProperty("--i", index);
+    });
+
+    const progress = document.querySelector(".reading-progress");
+    const journey = document.querySelector(".lesson-list");
+    const lessons = [...document.querySelectorAll(".lesson")];
+    let framePending = false;
+
+    function updateScrollEffects() {
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.transform = `scaleX(${Math.min(1, window.scrollY / Math.max(1, documentHeight))})`;
+
+      const rect = journey.getBoundingClientRect();
+      const journeyProgress = Math.max(
+        0,
+        Math.min(100, ((window.innerHeight * 0.65 - rect.top) / rect.height) * 100)
+      );
+      journey.style.setProperty("--journey", `${journeyProgress}%`);
+
+      lessons.forEach(lesson => {
+        lesson.classList.toggle("passed", lesson.getBoundingClientRect().top < window.innerHeight * 0.65);
+      });
+
+      framePending = false;
+    }
+
+    window.addEventListener("scroll", () => {
+      if (!framePending) {
+        framePending = true;
+        requestAnimationFrame(updateScrollEffects);
+      }
+    }, { passive: true });
+
+    window.addEventListener("resize", updateScrollEffects);
+    updateScrollEffects();
+
+    if ("IntersectionObserver" in window) {
+      document.body.classList.add("motion-ready");
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            const audience = entry.target.closest(".audience");
+            if (audience) audience.classList.add("in-view");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.35 });
+
+      document.querySelectorAll(".aud-grid, .benefit").forEach(section => {
+        observer.observe(section);
+      });
+    }
+  </script>
+</body>
+</html>

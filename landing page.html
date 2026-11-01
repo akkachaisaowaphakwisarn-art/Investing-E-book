@@ -530,6 +530,21 @@
       .market-line path { stroke-dashoffset: 0; }
       .market-line circle { opacity: 1; }
     }
+
+    .preview-section { background: var(--bg); }
+    .preview-pages { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin-top:36px; }
+    .preview-page { margin:0; min-width:0; }
+    .preview-open { display:block; width:100%; padding:0; background:none; border:0; cursor:zoom-in; border-radius:8px; transition:transform .25s; }
+    .preview-open:hover { transform:translateY(-6px); }
+    .preview-open:focus-visible { outline:3px solid var(--accent); outline-offset:6px; }
+    .preview-open img { display:block; width:100%; height:auto; border-radius:8px; box-shadow:0 16px 35px #0006; }
+    .preview-page figcaption { color:var(--muted); text-align:center; margin-top:14px; font-size:14px; }
+    .preview-dialog { width:min(1000px,96vw); max-height:94dvh; padding:0; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--text); }
+    .preview-dialog::backdrop { background:#000d; }
+    .preview-toolbar { position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 16px; background:var(--surface); }
+    .preview-close { font:inherit; color:var(--text); background:var(--surface-2); border:1px solid var(--line); padding:8px 18px; border-radius:30px; cursor:pointer; }
+    .preview-dialog img { display:block; width:100%; height:auto; }
+    @media(max-width:679px) { .preview-pages { grid-template-columns:1fr; max-width:360px; margin-inline:auto; gap:30px; } }
   </style>
 </head>
 
@@ -597,6 +612,13 @@
           <article class="lesson"><span class="num">04</span><h3>ลงมือทำ!</h3><p>นำสิ่งที่เรียนรู้มาใช้ฝึกศึกษาและวิเคราะห์หุ้นด้วยตัวเองทีละขั้น</p></article>
           <article class="lesson"><span class="num">05</span><h3>Special section<br>AI tools</h3><p>เรียนรู้การใช้ AI เป็นผู้ช่วยจัดข้อมูลและตั้งคำถาม พร้อมตรวจสอบกับแหล่งข้อมูลจริง</p></article>
         </div>
+      </div>
+    </section>
+
+    <section class="section preview-section" id="preview" aria-labelledby="preview-heading">
+      <div class="wrap">
+        <div class="intro"><span class="eyebrow">ลองเปิดอ่านก่อนตัดสินใจ</span><h2 id="preview-heading">ตัวอย่างเนื้อหาในเล่ม</h2><p class="lead">เปิดอ่านตัวอย่างหนังสือ 3 หน้า กดที่ภาพเพื่ออ่านแบบขยาย</p></div>
+        <div class="preview-pages"><figure class="preview-page"><button type="button" class="preview-open" data-preview="26.png" aria-label="ขยายตัวอย่างหนังสือ หน้า 26"><img src="26.png" alt="ตัวอย่างเนื้อหา E-book หน้า 26" loading="lazy" width="1414" height="2000"></button><figcaption>หน้า 26 · กดเพื่อขยาย</figcaption></figure><figure class="preview-page"><button type="button" class="preview-open" data-preview="27.png" aria-label="ขยายตัวอย่างหนังสือ หน้า 27"><img src="27.png" alt="ตัวอย่างเนื้อหา E-book หน้า 27" loading="lazy" width="1414" height="2000"></button><figcaption>หน้า 27 · กดเพื่อขยาย</figcaption></figure><figure class="preview-page"><button type="button" class="preview-open" data-preview="28.png" aria-label="ขยายตัวอย่างหนังสือ หน้า 28"><img src="28.png" alt="ตัวอย่างเนื้อหา E-book หน้า 28" loading="lazy" width="1414" height="2000"></button><figcaption>หน้า 28 · กดเพื่อขยาย</figcaption></figure></div>
       </div>
     </section>
 
@@ -803,6 +825,26 @@
         observer.observe(section);
       });
     }
+  </script>
+
+  <dialog class="preview-dialog" aria-label="ตัวอย่างหนังสือแบบขยาย">
+    <div class="preview-toolbar"><span id="preview-page-label">ตัวอย่างหนังสือ</span><button type="button" class="preview-close" autofocus>ปิด ✕</button></div>
+    <img id="preview-large" alt="">
+  </dialog>
+  <script>
+    const previewDialog = document.querySelector('.preview-dialog');
+    document.querySelectorAll('[data-preview]').forEach(button => button.addEventListener('click', () => {
+      const image = button.querySelector('img');
+      const large = document.getElementById('preview-large');
+      large.src = button.dataset.preview;
+      large.alt = image.alt;
+      document.getElementById('preview-page-label').textContent = image.alt;
+      previewDialog.showModal();
+      document.body.style.overflow = 'hidden';
+    }));
+    document.querySelector('.preview-close').addEventListener('click', () => previewDialog.close());
+    previewDialog.addEventListener('click', event => { if(event.target === previewDialog) { const box=previewDialog.getBoundingClientRect(); if(event.clientX<box.left || event.clientX>box.right || event.clientY<box.top || event.clientY>box.bottom) previewDialog.close(); } });
+    previewDialog.addEventListener('close', () => { document.body.style.overflow = ''; });
   </script>
 </body>
 </html>
